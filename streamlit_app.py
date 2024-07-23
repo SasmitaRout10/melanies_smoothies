@@ -1,3 +1,6 @@
+------------------------Bringing Data into the App via API  ▪️
+
+
 # Import python packages
 import streamlit as st
 from snowflake.snowpark.functions import col
@@ -14,15 +17,8 @@ st.write("The name on your Smoothie will be:", name_on_order)
 
 cnx=st.connection("snowflake")
 session = cnx.session()
-my_dataframe = session.table("smoothies.public.fruit_options").select(col('FRUIT_NAME'),col('SEARCH_ON'))
+my_dataframe = session.table("smoothies.public.fruit_options").select(col('FRUIT_NAME'))
 #st.dataframe(data=my_dataframe, use_container_width=True)
-#st.stop()
-
-#convert the snowpark dataframe
-pd_df=my_dataframe.to_pandas()
-st.dataframe(pd_df)
-st.stop()
-
 
 ingredients_list = st.multiselect(
 'Choose up to 5 ingredients:'
@@ -36,14 +32,9 @@ if ingredients_list:
     
 ingredients_string = ''
 
-for fruit_chosen in ingredients_list:
-    ingredients_string += fruit_chosen + ' '
- 
-    search_on=pd_df.loc[pd_df['FRUIT_NAME'] == fruit_chosen, 'SEARCH_ON'].iloc[0]
-    st.write('The search value for ', fruit_chosen,' is ', search_on, '.')
- 
-    st.subheader(fruit_chosen + ' Nutrition Information')
-    fruityvice_response = requests.get("https://fruityvice.com/api/fruit/" + fruit_chosen)
+for fruit_choosen in ingredients_list:
+    ingredients_string += fruit_choosen
+    fruityvice_response = requests.get("https://fruityvice.com/api/fruit/watermelon")
     fv_df = st.dataframe(data=fruityvice_response.json(), use_container_width=True)
     
 st.write(ingredients_string)
@@ -61,5 +52,7 @@ if time_to_insert:
 
 st.success('Your Smoothie is ordered! ', icon="✅")
 
-
-
+import requests
+fruityvice_response = requests.get("https://fruityvice.com/api/fruit/watermelon")
+# st.text(fruityvice_response.json())
+fv_df = st.dataframe(data=fruityvice_response.json(), use_container_width=True)
