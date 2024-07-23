@@ -1,5 +1,3 @@
-------------------------Bringing Data into the App via API  ▪️
-
 
 # Import python packages
 import streamlit as st
